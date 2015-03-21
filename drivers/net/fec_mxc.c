@@ -296,7 +296,7 @@ static int fec_tx_task_disable(struct fec_priv *fec)
 static void fec_rbd_init(struct fec_priv *fec, int count, int dsize)
 {
 	uint32_t size;
-	uint8_t *data;
+	uintptr_t data;
 	int i;
 
 	/*
@@ -305,8 +305,8 @@ static void fec_rbd_init(struct fec_priv *fec, int count, int dsize)
 	 */
 	size = roundup(dsize, ARCH_DMA_MINALIGN);
 	for (i = 0; i < count; i++) {
-		data = (uint8_t *)fec->rbd_base[i].data_pointer;
-		memset(data, 0, dsize);
+		data = (uintptr_t)(fec->rbd_base[i].data_pointer);
+		memset((void *)data, 0, dsize);
 		flush_dcache_range((uintptr_t)data, (uintptr_t)data + size);
 
 		fec->rbd_base[i].status = FEC_RBD_EMPTY;
