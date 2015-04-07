@@ -29,12 +29,12 @@
 #define PHY_100BT_FEATURES	(SUPPORTED_100baseT_Half | \
 				 SUPPORTED_100baseT_Full)
 
-#define PHY_1000BT_FEATURES	(SUPPORTED_1000baseT_Half | \
-				 SUPPORTED_1000baseT_Full)
-
 #define PHY_BASIC_FEATURES	(PHY_10BT_FEATURES | \
 				 PHY_100BT_FEATURES | \
 				 PHY_DEFAULT_FEATURES)
+
+#define PHY_1000BT_FEATURES	(SUPPORTED_1000baseT_Half | \
+				 SUPPORTED_1000baseT_Full)
 
 #define PHY_GBIT_FEATURES	(PHY_BASIC_FEATURES | \
 				 PHY_1000BT_FEATURES)
@@ -43,6 +43,7 @@
 				SUPPORTED_10000baseT_Full)
 
 #ifndef PHY_ANEG_TIMEOUT
+
 #define PHY_ANEG_TIMEOUT	4000
 #endif
 
@@ -154,16 +155,16 @@ struct phy_device {
 	struct phy_driver *drv;
 	void *priv;
 
-#ifdef CONFIG_DM_ETH
-	struct udevice *dev;
+    #ifdef CONFIG_DM_ETH
+		struct udevice *dev;
 #else
 	struct eth_device *dev;
-#endif
+    #endif
 
-	/* forced speed & duplex (no autoneg)
-	 * partner speed & duplex & pause (autoneg)
-	 */
-	int speed;
+		/* forced speed & duplex (no autoneg)
+		 * partner speed & duplex & pause (autoneg)
+		 */
+		int speed;
 	int duplex;
 
 	/* The most recently read link state */
@@ -250,6 +251,7 @@ int gen10g_shutdown(struct phy_device *phydev);
 int gen10g_discover_mmds(struct phy_device *phydev);
 
 int phy_aquantia_init(void);
+
 int phy_atheros_init(void);
 int phy_broadcom_init(void);
 int phy_cortina_init(void);
@@ -263,12 +265,12 @@ int phy_natsemi_init(void);
 int phy_realtek_init(void);
 int phy_smsc_init(void);
 int phy_teranetics_init(void);
-int phy_ti_init(void);
 int phy_vitesse_init(void);
-
+int phy_ti_init(void);
 
 int board_phy_config(struct phy_device *phydev);
 int get_phy_id(struct mii_dev *bus, int addr, int devad, u32 *phy_id);
+#define PHY_UID_TN2020	0x00a19410
 
 /**
  * phy_get_interface_by_name() - Look up a PHY interface name
@@ -280,6 +282,5 @@ int phy_get_interface_by_name(const char *str);
 
 /* PHY UIDs for various PHYs that are referenced in external code */
 #define PHY_UID_CS4340  0x13e51002
-#define PHY_UID_TN2020	0x00a19410
 
 #endif
