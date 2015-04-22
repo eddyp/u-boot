@@ -150,7 +150,7 @@ typedef u64 iomux_v3_cfg_t;
 #define PAD_CTL_LVE_BIT		(1 << 22)
 #endif
 
-#elif defined(CONFIG_VF610)
+#elif defined(CONFIG_VF610) || defined(CONFIG_SAC58R) || defined(CONFIG_MAC57D5XH)
 
 #define PAD_MUX_MODE_SHIFT	20
 
@@ -162,9 +162,13 @@ typedef u64 iomux_v3_cfg_t;
 #define PAD_CTL_SRE		(1 << 11)
 
 #define PAD_CTL_ODE		(1 << 10)
+#define PAD_CTL_HYS			(1 << 9)
 
 #define PAD_CTL_DSE_150ohm	(1 << 6)
+#define PAD_CTL_DSE_75ohm	(2 << 6)
 #define PAD_CTL_DSE_50ohm	(3 << 6)
+#define PAD_CTL_DSE_37ohm	(4 << 6)
+#define PAD_CTL_DSE_30ohm	(5 << 6)
 #define PAD_CTL_DSE_25ohm	(6 << 6)
 #define PAD_CTL_DSE_20ohm	(7 << 6)
 
