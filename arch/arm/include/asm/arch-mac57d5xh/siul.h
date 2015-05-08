@@ -18,11 +18,8 @@
  */
 
 
-#ifndef __ARCH_ARM_MACH_S32V234_SIUL_H__
-#define __ARCH_ARM_MACH_S32V234_SIUL_H__
-
-#define SIUL2_BASE_ADDR				(0x4006C000UL)
-
+#ifndef __ARCH_ARM_MACH_MAC57D5XH_SIUL_H__
+#define __ARCH_ARM_MACH_MAC57D5XH_SIUL_H__
 
 #define SIUL2_MIDR1					(SIUL2_BASE_ADDR + 0x00000004)
 #define SIUL2_MIDR2					(SIUL2_BASE_ADDR + 0x00000008)
@@ -44,8 +41,9 @@
 #define SIUL2_MSCR_BASE				(SIUL2_BASE_ADDR + 0x00000240)
 #define SIUL2_MSCRn(i)				(SIUL2_MSCR_BASE + 4 * (i))
 
-#define SIUL2_IMCR_BASE				(SIUL2_BASE_ADDR + 0x00000A40)
-#define SIUL2_IMCRn(i)				(SIUL2_IMCR_BASE +  4 * (i))
+#define SIUL2_GRP0					(SIUL2_BASE_ADDR + 0x00001240)
+#define SIUL2_GPR1					(SIUL2_BASE_ADDR + 0x00001244)
+#define SIUL2_GPR2					(SIUL2_BASE_ADDR + 0x00001248)
 
 #define SIUL2_GPDO_BASE				(SIUL2_BASE_ADDR + 0x00001300)
 #define SIUL2_GPDOn(i)				(SIUL2_GPDO_BASE + 4 * (i))
@@ -54,71 +52,62 @@
 #define SIUL2_GPDIn(i)				(SIUL2_GPDI_BASE + 4 * (i))
 
 #define SIUL2_PGPDO_BASE			(SIUL2_BASE_ADDR + 0x00001700)
-#define SIUL2_PGPDOn(i)				(SIUL2_PGPDO_BASE +  2 * (i))
+#define SIUL2_PGPDOn(i)				(SIUL2_PGPDO_BASE +  2 * ((i) % 2 ? ((i) - 1) : ((i) + 1)))
 
 #define SIUL2_PGPDI_BASE			(SIUL2_BASE_ADDR + 0x00001740)
-#define SIUL2_PGPDIn(i)				(SIUL2_PGPDI_BASE + 2 * (i))
+#define SIUL2_PGPDIn(i)				(SIUL2_PGPDI_BASE + 2 * ((i) % 2 ? ((i) - 1) : ((i) + 1)))
 
 #define SIUL2_MPGPDO_BASE			(SIUL2_BASE_ADDR + 0x00001780)
 #define SIUL2_MPGPDOn(i)			(SIUL2_MPGPDO_BASE + 4 * (i))
 
 
 /* SIUL2_MSCR masks */
-#define SIUL2_MSCR_DDR_DO_TRIM(v)	((v) & 0xC0000000)
-#define SIUL2_MSCR_DDR_INPUT(v)		((v) & 0x20000000)
-#define SIUL2_MSCR_DDR_SEL(v)		((v) & 0x18000000)
-#define SIUL2_MSCR_DDR_ODT(v)		((v) & 0x07000000)
-#define SIUL2_MSCR_DCYCLE_TRIM(v)	((v) & 0x00C00000)
+#define SIUL2_MSCR_SRE(v)			((v) & 0x30000000)
 
-#define SIUL2_MSCR_OBE(v)			((v) & 0x00200000)
-#define SIUL2_MSCR_OBE_EN			(1 << 21)
+#define SIUL2_MSCR_OBE(v)			((v) & 0x02000000)
+#define SIUL2_MSCR_OBE_EN			(1 << 25)
 
-#define SIUL2_MSCR_ODE(v)			((v) & 0x00100000)
-#define SIUL2_MSCR_ODE_EN			(1 << 20)
+#define SIUL2_MSCR_ODE(v)			((v) & 0x01000000)
+#define SIUL2_MSCR_ODE_EN			(1 << 24)
 
-#define SIUL2_MSCR_IBE(v)			((v) & 0x00010000)
+#define SIUL2_MSCR_SMCTL(v)			((v) & 0x00800000)
+#define SIUL2_MSCR_APC(v)			((v) & 0x00400000)
+#define SIUL2_MSCR_TTL(v)			((v) & 0x00100000)
+
+#define SIUL2_MSCR_IBE(v)			((v) & 0x00080000)
 #define SIUL2_MSCR_IBE_EN			(1 << 19)
 
 #define SIUL2_MSCR_HYS(v)			((v) & 0x00400000)
 #define SIUL2_MSCR_HYS_EN			(1 << 18)
 
-#define SIUL2_MSCR_INV(v)			((v) & 0x00020000)
-#define SIUL2_MSCR_INV_EN			(1 << 17)
+#define SIUL2_MSCR_PUS(v)			((v) & 0x00200000)
+#define SIUL2_MSCR_PUS_UP			(1 << 17)
 
-#define SIUL2_MSCR_PKE(v)			((v) & 0x00010000)
-#define SIUL2_MSCR_PKE_EN			(1 << 16)
+#define SIUL2_MSCR_PUE(v)			((v) & 0x00100000)
+#define SIUL2_MSCR_PUE_EN			(1 << 16)
 
-#define SIUL2_MSCR_SRE(v)			((v) & 0x0000C000)
-
-#define SIUL2_MSCR_PUE(v)			((v) & 0x00002000)
-#define SIUL2_MSCR_PUE_EN			(1 << 13)
-
-#define SIUL2_MSCR_PUS(v)			((v) & 0x00001800)
-
-#define SIUL2_MSCR_DSE(v)			((v) & 0x00000700)
-#define SIUL2_MSCR_CRPOINT_TRIM(v)	((v) & 0x000000C0)
-#define SIUL2_MSCR_SMC(v)			((v) & 0x00000020)
-#define SIUL2_MSCR_MUX_MODE(v)		((v) & 0x0000000f)
-
+#define SIUL2_MSCR_SSS(v)			((v) & 0x0000000f)
 
 /* Configure SIUL2 for UART */
-#define SIUL2_MSCR_MUX_MODE_UART_Tx		(0x2)
-#define SIUL2_MSCR_MUX_MODE_UART_Rx		(0x1)
-#define SIUL2_MSCR_PUS_50KOHM_UP		(0x800)
+#define SIUL2_MSCR_SSS_UART			(0x3)
 
 /*
- * 714 - UART 1 Receive Data PAD
- *  13 - General Purpose I/O PAD
+ * See IO_Signal_Description_and_Multiplexing_Tables.xlsx document for
+ * UART2 configuration details:
+ * 714 - LinFlex2_Receive_Input PAD
+ * 173 - General Purpose I/O PAD
  */
-#define SIUL2_MSCR_UART1_Rx									\
-	writel(SIUL2_MSCR_MUX_MODE_UART_Rx, SIUL2_MSCRn(714));	\
-	writel(SIUL2_MSCR_IBE_EN, SIUL2_MSCRn(13))
+#define SIUL2_MSCR_UART_Rx							\
+	writel(SIUL2_MSCR_SSS_UART, SIUL2_MSCRn(714));	\
+	writel(SIUL2_MSCR_IBE_EN, SIUL2_MSCRn(173))
 
-/*
- * 14 - General Purpose I/O PAD
- */
-#define SIUL2_MSCR_UART1_Tx	\
-	writel(SIUL2_MSCR_OBE_EN | SIUL2_MSCR_PUE_EN | SIUL2_MSCR_PUS_50KOHM_UP | SIUL2_MSCR_MUX_MODE_UART_Tx, SIUL2_MSCRn(14))
+/* 174 - General Purpose I/O PAD */
+#define SIUL2_MSCR_UART_Tx	\
+	writel(SIUL2_MSCR_OBE_EN | SIUL2_MSCR_PUS_UP | SIUL2_MSCR_PUE_EN | SIUL2_MSCR_SSS_UART, SIUL2_MSCRn(174))
 
 
-#endif /*__ARCH_ARM_MACH_S32V234_SIUL_H__ */
+#define SIUL2_MSCR_LINFLEX0_Rx		SIUL2_MSCRn(712)
+
+#define SIUL2_MSCR_LINFLEX1_Rx		SIUL2_MSCRn(713)
+
+#endif /*__ARCH_ARM_MACH_MAC57D5XH_SIUL_H__ */
