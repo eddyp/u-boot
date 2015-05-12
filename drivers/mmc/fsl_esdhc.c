@@ -202,7 +202,7 @@ static int esdhc_setup_data(struct mmc *mmc, struct mmc_data *data)
 		else
 			esdhc_write32(&regs->dsaddr, lower_32_bits(addr));
 #else
-		esdhc_write32(&regs->dsaddr, (u32)data->dest);
+		esdhc_write32(&regs->dsaddr, (uintptr_t)data->dest);
 #endif
 #endif
 	} else {
@@ -226,9 +226,9 @@ static int esdhc_setup_data(struct mmc *mmc, struct mmc_data *data)
 		if (upper_32_bits(addr))
 			printf("Error found for upper 32 bits\n");
 		else
-			esdhc_write32(&regs->dsaddr, lower_32_bits(addr));
+		esdhc_write32(&regs->dsaddr, (uintptr_t)data->src);
 #else
-		esdhc_write32(&regs->dsaddr, (u32)data->src);
+		esdhc_write32(&regs->dsaddr, (uintptr_t)data->src);
 #endif
 #endif
 	}
@@ -285,11 +285,11 @@ static void check_and_invalidate_dcache_range
 #ifdef CONFIG_FSL_LAYERSCAPE || defined(CONFIG_S32V234)
 	unsigned start = 0;
 #else
-	unsigned start = (unsigned)data->dest ;
+	unsigned long start = (unsigned long)data->dest ;
 #endif
 	unsigned size = roundup(ARCH_DMA_MINALIGN,
 				data->blocks*data->blocksize);
-	unsigned end = start+size ;
+	unsigned long end = start+size ;
 #ifdef CONFIG_FSL_LAYERSCAPE || defined(CONFIG_S32V234)
 	dma_addr_t addr;
 

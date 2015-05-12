@@ -171,9 +171,9 @@ struct fsl_esdhc_cfg {
 #ifdef CONFIG_FSL_LAYERSCAPE
 	u64	esdhc_base;
 #else
-	u32	esdhc_base;
+	uintptr_t esdhc_base;
 #endif
-	u32	sdhc_clk;
+	uintptr_t sdhc_clk;
 	u8	max_bus_width;
 	struct mmc_config cfg;
 };
