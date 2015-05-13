@@ -316,13 +316,14 @@ void imx_get_mac_from_fuse(int dev_id, unsigned char *mac)
 #if defined(CONFIG_DISPLAY_CPUINFO)
 static char *get_reset_cause(void)
 {
-#if 0
-    u32 cause = 0;
 /* b47303
  * The cause of reset is determined on s32v234 using MC_RGM module.
  * MC_RGM_FES register should be used to extract the desired
  * information.
  * */
+
+#if 0
+    u32 cause = 0;
 
     switch (cause) {
     case 0x08:
@@ -336,9 +337,8 @@ static char *get_reset_cause(void)
     default:
         return "unknown reset";
     }
-#else
-    return "unknown reset";
 #endif /* to be used as implementation model */
+	return 0;
 }
 
 #define SRC_SCR_SW_RST                  (1<<12)
