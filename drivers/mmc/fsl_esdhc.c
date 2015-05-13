@@ -1,5 +1,5 @@
 /*
- * Copyright 2007, 2010-2011 Freescale Semiconductor, Inc
+ * Copyright 2007, 2010-2015 Freescale Semiconductor, Inc
  * Andy Fleming
  *
  * Based vaguely on the pxa mmc code:
@@ -105,8 +105,9 @@ static uint esdhc_xfertyp(struct mmc_cmd *cmd, struct mmc_data *data)
 	else if (cmd->resp_type & MMC_RSP_PRESENT)
 		xfertyp |= XFERTYP_RSPTYP_48;
 
-#if defined(CONFIG_MX53) || defined(CONFIG_T4240QDS)
-	defined(CONFIG_FSL_LAYERSCAPE)
+#if defined(CONFIG_MX53) || defined(CONFIG_T4240QDS) || \
+	defined(CONFIG_LS102XA) || defined(CONFIG_LS2085A) || \
+	defined(CONFIG_S32V234)
 	if (cmd->cmdidx == MMC_CMD_STOP_TRANSMISSION)
 		xfertyp |= XFERTYP_CMDTYP_ABORT;
 #endif
@@ -184,7 +185,7 @@ static int esdhc_setup_data(struct mmc *mmc, struct mmc_data *data)
 	int timeout;
 	struct fsl_esdhc_cfg *cfg = mmc->priv;
 	struct fsl_esdhc *regs = (struct fsl_esdhc *)cfg->esdhc_base;
-#ifndef CONFIG_SYS_FSL_ESDHC_USE_PIO
+#if defined(CONFIG_FSL_LAYERSCAPE) || defined(CONFIG_S32V234)
 	dma_addr_t addr;
 #endif
 	uint wml_value;
