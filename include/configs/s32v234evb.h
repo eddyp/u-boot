@@ -50,8 +50,7 @@
 #define CONFIG_CMDLINE_TAG
 
 /* SMP Spin Table Definitions */
-/*(CONFIG_SYS_SDRAM_BASE + 0x7fff0)*/
-#define CPU_RELEASE_ADDR                (0x3e97fff0)
+#define CPU_RELEASE_ADDR                (CONFIG_SYS_SDRAM_BASE + 0x7fff0)
 
 /* Generic Timer Definitions */
 #define COUNTER_FREQUENCY               (800000000)     /* 800MHz */
@@ -102,7 +101,7 @@
 #define CONFIG_PHY_MICREL
 #endif
 
-#if 0
+#if 0 /* Disable until the I2C driver will be updated */
 /* I2C Configs */
 #define CONFIG_CMD_I2C
 #define CONFIG_HARD_I2C
@@ -111,9 +110,9 @@
 #define CONFIG_SYS_I2C_SPEED		100000
 #endif
 
-#if 0 /* b00450 */
+#if 0 /* Disable until the FLASH will be implemented */
 #define CONFIG_SYS_USE_NAND
-#endif /* b00450 */
+#endif
 
 #ifdef CONFIG_SYS_USE_NAND
 /* Nand Flash Configs */
@@ -238,11 +237,10 @@
 #define CONFIG_SYS_MEMTEST_END		0x87C00000
 
 #define CONFIG_SYS_LOAD_ADDR		CONFIG_LOADADDR
-#define CONFIG_SYS_HZ			1000
+#define CONFIG_SYS_HZ				1000
 
-/* #define CONFIG_SYS_TEXT_BASE		0x3f008000 // OCRAM sys0 */
-/* #define CONFIG_SYS_TEXT_BASE		0x3f048000 // OCRAM sys1 */
-#define CONFIG_SYS_TEXT_BASE		0x3f008000 /* OCRAM gfx - 512KB */
+#define CONFIG_SYS_TEXT_BASE		0x3E800000 /* SDRAM */
+
 #ifdef CONFIG_RUN_FROM_IRAM_ONLY
 #define CONFIG_SYS_MALLOC_BASE		0x80000000
 #endif
@@ -262,8 +260,8 @@
 
 
 /* Physical memory map */
-#define CONFIG_NR_DRAM_BANKS		1
-#define PHYS_SDRAM			(0x80000000)
+#define CONFIG_NR_DRAM_BANKS	1
+#define PHYS_SDRAM				(0x80000000)
 #define PHYS_SDRAM_SIZE			(16 * 1024 * 1024)
 
 #define CONFIG_SYS_SDRAM_BASE		PHYS_SDRAM
