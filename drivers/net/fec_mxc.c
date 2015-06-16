@@ -69,6 +69,7 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #undef DEBUG
 
+
 #ifdef CONFIG_FEC_MXC_SWAP_PACKET
 static void swap_packet(uint32_t *packet, int length)
 {
@@ -535,7 +536,10 @@ static int fec_open(struct eth_device *edev)
 static int fec_init(struct eth_device *dev, bd_t* bd)
 {
 	struct fec_priv *fec = (struct fec_priv *)dev->priv;
-	uintptr_t mib_ptr = (uintptr_t)&fec->eth->rmon_t_drop;
+	uintptr_t mib_ptr_start1 = (uintptr_t)&fec->eth->rmon_t_drop;
+	uintptr_t mib_ptr_end1 = (uintptr_t)&fec->eth->res13;
+	uintptr_t mib_ptr_start2 = (uintptr_t)&fec->eth->rmon_r_packets;
+	uintptr_t mib_ptr_end2 = (uintptr_t)&fec->eth->res14;
 	uintptr_t i;
 
 	/* Initialize MAC address */
@@ -568,14 +572,17 @@ static int fec_init(struct eth_device *dev, bd_t* bd)
 
 	/* Do not access reserved register for i.MX6UL */
 	if (!is_cpu_type(MXC_CPU_MX6UL)) {
-		/* clear MIB RAM */
-		for (i = mib_ptr; i <= mib_ptr + 0xfc; i += 4)
+		/* clear MIB RAM: avoid the reserved space from FEC memory map. */
+		for (i = mib_ptr_start1; i < mib_ptr_end1; i += 4)
+			writel(0, i);
+		for (i = mib_ptr_start2; i < mib_ptr_end2; i += 4)
 			writel(0, i);
 
+#if !defined(CONFIG_S32V234)
 		/* FIFO receive start register */
 		writel(0x520, &fec->eth->r_fstart);
+#endif
 	}
-
 	/* size and address of each buffer */
 	writel(FEC_MAX_PKT_SIZE, &fec->eth->emrbr);
 	writel((uintptr_t)fec->tbd_base, &fec->eth->etdsr);
@@ -788,9 +795,8 @@ static int fec_recv(struct eth_device *dev)
 	struct fec_bd *rbd = &fec->rbd_base[fec->rbd_index];
 	unsigned long ievent;
 	int frame_length, len = 0;
-	uintptr_t addr, frame;
-	uintptr_t_a *data_pointer_addr;
 	uint16_t bd_status;
+	uintptr_t addr;
 	uint32_t size, end;
 	int i;
 	ALLOC_CACHE_ALIGN_BUFFER(uchar, buff, FEC_MAX_PKT_SIZE);
@@ -849,13 +855,11 @@ static int fec_recv(struct eth_device *dev)
 			/*
 			 * Get buffer address and size
 			 */
-			data_pointer_addr = (uintptr_t_a *)&rbd->data_pointer;
-			frame = (struct nbuf *)readl(&rbd->data_pointer);
+			addr = readl(&rbd->data_pointer);
 			frame_length = readw(&rbd->data_length) - 4;
 			/*
 			 * Invalidate data cache over the buffer
 			 */
-			addr = (uint32_t)frame;
 			end = roundup(addr + frame_length, ARCH_DMA_MINALIGN);
 			addr &= ~(ARCH_DMA_MINALIGN - 1);
 			invalidate_dcache_range(addr, end);
@@ -864,14 +868,14 @@ static int fec_recv(struct eth_device *dev)
 			 *  Fill the buffer and pass it to upper layers
 			 */
 #ifdef CONFIG_FEC_MXC_SWAP_PACKET
-			swap_packet((uint32_t *)frame->data, frame_length);
+			swap_packet((uint32_t *)addr, frame_length);
 #endif
-			memcpy(buff, frame->data, frame_length);
+			memcpy(buff, (char *)addr, frame_length);
 			net_process_received_packet(buff, frame_length);
 			len = frame_length;
 		} else {
 			if (bd_status & FEC_RBD_ERR)
-				printf("error frame: 0x%08x 0x%08x\n",
+				printf("error frame: 0x%08lx 0x%08x\n",
 				       addr, bd_status);
 		}
 
@@ -911,6 +915,7 @@ static int fec_alloc_descs(struct fec_priv *fec)
 	unsigned int size;
 	int i;
 	uint8_t *data;
+	uintptr_t aux;
 
 	/* Allocate TX descriptors. */
 	size = roundup(2 * sizeof(struct fec_bd), ARCH_DMA_MINALIGN);
@@ -956,7 +961,10 @@ static int fec_alloc_descs(struct fec_priv *fec)
 
 err_ring:
 	for (; i >= 0; i--)
-		free((void *)fec->rbd_base[i].data_pointer);
+	{
+		aux = (uintptr_t)fec->rbd_base[i].data_pointer;
+		free((void *)aux);
+	}
 	free(fec->rbd_base);
 err_rx:
 	free(fec->tbd_base);
@@ -967,9 +975,13 @@ err_tx:
 static void fec_free_descs(struct fec_priv *fec)
 {
 	int i;
+	uintptr_t aux;
 
 	for (i = 0; i < FEC_RBD_NUM; i++)
-		free((void *)fec->rbd_base[i].data_pointer);
+	{
+		aux = (uintptr_t)fec->rbd_base[i].data_pointer;
+		free((void *)aux);
+	}
 	free(fec->rbd_base);
 	free(fec->tbd_base);
 }
@@ -1091,7 +1103,7 @@ struct mii_dev *fec_get_miibus(uintptr_t base_addr, int dev_id)
 	return bus;
 }
 
-int fecmxc_initialize_multi(bd_t *bd, int dev_id, int phy_id, uint32_t addr)
+int fecmxc_initialize_multi(bd_t *bd, int dev_id, int phy_id, uintptr_t addr)
 {
 	uint32_t base_mii;
 	struct mii_dev *bus = NULL;
@@ -1109,7 +1121,7 @@ int fecmxc_initialize_multi(bd_t *bd, int dev_id, int phy_id, uint32_t addr)
 #else
 	base_mii = addr;
 #endif
-	debug("eth_init: fec_probe(bd, %i, %i) @ %08x\n", dev_id, phy_id, addr);
+	debug("eth_init: fec_probe(bd, %i, %i) @ %08lx\n", dev_id, phy_id, addr);
 	bus = fec_get_miibus(base_mii, dev_id);
 	if (!bus)
 		return -ENOMEM;
