@@ -133,7 +133,7 @@
 #define CONFIG_SYS_64BIT_VSPRINTF  /* needed for nand_util.c */
 #endif
 
-#define CONFIG_BOOTDELAY		(-1)
+#define CONFIG_BOOTDELAY		-1
 
 #define CONFIG_LOADADDR			(DDR_BASE_ADDR + 0x2000000)
 #define CONFIG_BOOTARGS			"console=ttyLF0 root=/dev/ram rw"
