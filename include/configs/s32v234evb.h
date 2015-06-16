@@ -97,7 +97,6 @@
 #define CONFIG_CMD_FAT  /* FAT support */
 #define CONFIG_DOS_PARTITION
 
-#if 0
 /* Ethernet config */
 #define CONFIG_CMD_PING
 #define CONFIG_CMD_DHCP
@@ -109,7 +108,6 @@
 #define CONFIG_FEC_MXC_PHYADDR  0
 #define CONFIG_PHYLIB
 #define CONFIG_PHY_MICREL
-#endif
 
 /* I2C Configs */
 #define CONFIG_CMD_I2C
