@@ -582,7 +582,7 @@ static int bus_i2c_write(struct mxc_i2c_bus *i2c_bus, u8 chip, u32 addr,
 
 static struct mxc_i2c_bus mxc_i2c_buses[] = {
 #if defined(CONFIG_LS102XA) || defined(CONFIG_VF610) || \
-	defined(CONFIG_FSL_LAYERSCAPE)
+	defined(CONFIG_FSL_LAYERSCAPE) || defined(CONFIG_S32V234)
 	{ 0, I2C1_BASE_ADDR, I2C_QUIRK_FLAG },
 	{ 1, I2C2_BASE_ADDR, I2C_QUIRK_FLAG },
 	{ 2, I2C3_BASE_ADDR, I2C_QUIRK_FLAG },
@@ -694,20 +694,20 @@ U_BOOT_I2C_ADAP_COMPLETE(mxc1, mxc_i2c_init, mxc_i2c_probe,
 			 CONFIG_SYS_MXC_I2C2_SLAVE, 1)
 #endif
 
-#ifdef CONFIG_SYS_I2C_MXC_I2C3
-U_BOOT_I2C_ADAP_COMPLETE(mxc2, mxc_i2c_init, mxc_i2c_probe,
-			 mxc_i2c_read, mxc_i2c_write,
-			 mxc_i2c_set_bus_speed,
-			 CONFIG_SYS_MXC_I2C3_SPEED,
-			 CONFIG_SYS_MXC_I2C3_SLAVE, 2)
-#endif
-
 #ifdef CONFIG_SYS_I2C_MXC_I2C4
 U_BOOT_I2C_ADAP_COMPLETE(mxc3, mxc_i2c_init, mxc_i2c_probe,
 			 mxc_i2c_read, mxc_i2c_write,
 			 mxc_i2c_set_bus_speed,
 			 CONFIG_SYS_MXC_I2C4_SPEED,
 			 CONFIG_SYS_MXC_I2C4_SLAVE, 3)
+#endif
+
+#ifdef CONFIG_SYS_I2C_MXC_I2C3
+U_BOOT_I2C_ADAP_COMPLETE(mxc2, mxc_i2c_init, mxc_i2c_probe,
+			 mxc_i2c_read, mxc_i2c_write,
+			 mxc_i2c_set_bus_speed,
+			 CONFIG_SYS_MXC_I2C3_SPEED,
+			 CONFIG_SYS_MXC_I2C3_SLAVE, 2)
 #endif
 
 #else
