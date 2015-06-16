@@ -104,8 +104,12 @@ struct ethernet_regs {
 	uint32_t t_fdxfc;		/* MBAR_ETH + 0x270 */
 	uint32_t ieee_t_octets_ok;	/* MBAR_ETH + 0x274 */
 
+#if defined(CONFIG_S32V234)
+	uint32_t res13[3];		/* MBAR_ETH + 0x278-280 */
+#else
 	uint32_t res13[2];		/* MBAR_ETH + 0x278-27C */
 	uint32_t rmon_r_drop;		/* MBAR_ETH + 0x280 */
+#endif
 	uint32_t rmon_r_packets;	/* MBAR_ETH + 0x284 */
 	uint32_t rmon_r_bc_pkt;		/* MBAR_ETH + 0x288 */
 	uint32_t rmon_r_mc_pkt;		/* MBAR_ETH + 0x28C */
@@ -229,11 +233,11 @@ typedef uintptr_t __attribute__((__may_alias__)) uintptr_t_a;
  *
  * Note: The first BD must be aligned (see DB_ALIGNMENT)
  */
-struct __attribute__((__may_alias__)) fec_bd {
-	uint16_t data_length;		/* payload's length in bytes */
-	uint16_t status;		/* BD's staus (see datasheet) */
-	/* uint32_t data_pointer;		payload's buffer address */
-	uintptr_t_a data_pointer;		/* payload's buffer address */
+struct __attribute__((__may_alias__)) fec_bd
+{
+	volatile uint16_t data_length;		/* payload's length in bytes */
+	volatile uint16_t status;			/* BD's staus (see datasheet) */
+	volatile uint32_t data_pointer;		/* payload's buffer address */
 };
 
 /**
