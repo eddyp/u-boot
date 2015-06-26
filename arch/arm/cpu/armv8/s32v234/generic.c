@@ -35,6 +35,10 @@ u32 get_cpu_rev(void)
 	return cpu;
 }
 
+#ifdef CONFIG_FSL_ESDHC
+DECLARE_GLOBAL_DATA_PTR;
+#endif
+
 static uintptr_t get_pllfreq(	u32 pll, u32 refclk_freq, u32 plldv,
 								u32 pllfd, u32 selected_output  )
 {
@@ -406,5 +410,8 @@ int cpu_eth_init(bd_t *bis)
 
 int get_clocks(void)
 {
+#ifdef CONFIG_FSL_ESDHC
+	gd->arch.sdhc_clk = mxc_get_clock(MXC_USDHC_CLK);
+#endif
 	return 0;
 }
