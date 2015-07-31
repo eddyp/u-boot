@@ -349,7 +349,7 @@ static char *get_reset_cause(void)
  * The cause of reset is determined on using MC_RGM module.
  * MC_RGM_FES register is used to extract the desired information.
  * */
-	u32 cause = readl(MC_RGM_BASE + 0x300);
+	u32 cause = readl(MC_RGM_BASE_ADDR + 0x300);
 
 	if (cause & 0x8000)
 		return "WDOG";
