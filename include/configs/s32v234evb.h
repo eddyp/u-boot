@@ -100,6 +100,7 @@
 #define CONFIG_DOS_PARTITION
 
 #if 0
+
 /* Ethernet config */
 #define CONFIG_CMD_PING
 #define CONFIG_CMD_DHCP
@@ -114,6 +115,7 @@
 #endif
 
 #if 0 /* Disable until the I2C driver will be updated */
+
 /* I2C Configs */
 #define CONFIG_CMD_I2C
 #define CONFIG_HARD_I2C
@@ -140,8 +142,7 @@
 #endif
 
 #define CONFIG_BOOTDELAY		3
-
-#define CONFIG_LOADADDR			(DDR_BASE_ADDR + 0x2000000)
+#define CONFIG_LOADADDR			0xC307FFC0
 #define CONFIG_BOOTARGS			"console=ttyLF0 root=/dev/ram rw"
 
 #define CONFIG_CMD_ENV
