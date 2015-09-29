@@ -27,6 +27,7 @@ static table_entry_t imximage_cmds[] = {
 	{CMD_CHECK_BITS_CLR,    "CHECK_BITS_CLR",   "Reg Check bits clr", },
 	{CMD_CSF,               "CSF",           "Command Sequence File", },
 	{CMD_IMAGE_VERSION,     "IMAGE_VERSION",        "image version",  },
+	{CMD_SECURE_CALLBACK,   "SECURE_CALLBACK",     "secure callback", },
 	{-1,                    "",                     "",	          },
 };
 
@@ -81,6 +82,7 @@ static uint32_t imximage_version;
  */
 static uint32_t imximage_ivt_offset = UNDEFINED;
 static uint32_t imximage_csf_size = UNDEFINED;
+static uint32_t imximage_scc_size = UNDEFINED;
 /* Initial Load Region Size */
 static uint32_t imximage_init_loadsize;
 
@@ -91,6 +93,8 @@ static set_imx_hdr_t set_imx_hdr;
 static uint32_t max_dcd_entries;
 static uint32_t *header_size_ptr;
 static uint32_t *csf_ptr;
+static uint32_t *secure_callback_ptr;
+static uint32_t *auth_length_ptr;
 
 static uint32_t get_cfg_value(char *token, char *name,  int linenr)
 {
@@ -397,6 +401,8 @@ static void set_imx_hdr_v3(struct imx_header *imxhdr, uint32_t dcd_len,
 	fhdr_v3->self_test = 0;
 
 	header_size_ptr = &hdr_v3->boot_data.size;
+	auth_length_ptr = &fhdr_v3->auth_length;
+	secure_callback_ptr = &fhdr_v3->secure_callback;
 }
 
 static void set_hdr_func(void)
@@ -509,18 +515,17 @@ static void print_hdr_v3(struct imx_header *imx_hdr)
 
 	version = detect_imximage_version(imx_hdr);
 
-	printf("Image Type:   Freescale IMX Boot Image\n");
+	printf("Image Type:   Freescale S32 Boot Image\n");
 	printf("Image Ver:    %x", version);
 	printf("%s\n", get_table_entry_name(imximage_versions, NULL, version));
 	printf("Data Size:    ");
 	genimg_print_size(hdr_v3->boot_data.size);
 	printf("Load Address: %08x\n", (uint32_t)fhdr_v3->boot_data_ptr);
 	printf("Entry Point:  %08x\n", (uint32_t)fhdr_v3->entry);
-	if (fhdr_v3->secure_callback) {
-		printf("HAB Blocks:   %08x %08x %08x\n",
+	if (fhdr_v3->secure_callback && (imximage_scc_size != UNDEFINED)) {
+		printf("HAB Blocks:   %08x %08x %08x %08x\n",
 		       (uint32_t)fhdr_v3->self, 0,
-		       hdr_v3->boot_data.size - imximage_ivt_offset -
-		       fhdr_v3->auth_length);
+		       fhdr_v3->auth_length, fhdr_v3->secure_callback);
 	}
 }
 
@@ -595,6 +600,17 @@ static void parse_cfg_cmd(struct imx_header *imxhdr, int32_t cmd, char *token,
 			exit(EXIT_FAILURE);
 		}
 		imximage_csf_size = get_cfg_value(token, name, lineno);
+		if (unlikely(cmd_ver_first != 1))
+			cmd_ver_first = 0;
+		break;
+	case CMD_SECURE_CALLBACK:
+		if (imximage_version != 3) {
+			fprintf(stderr,
+				"Error: %s[%d] - Secure Callback only supported for \
+				VERSION 3(%s)\n", name, lineno, token);
+			exit(EXIT_FAILURE);
+		}
+		imximage_scc_size = get_cfg_value(token, name, lineno);
 		if (unlikely(cmd_ver_first != 1))
 			cmd_ver_first = 0;
 		break;
@@ -763,6 +779,7 @@ static void imximage_set_header(void *ptr, struct stat *sbuf, int ifd,
 	/* Be able to detect if the cfg file has no BOOT_FROM tag */
 	imximage_ivt_offset = FLASH_OFFSET_UNDEFINED;
 	imximage_csf_size = 0;
+	imximage_scc_size = 0;
 	set_hdr_func();
 
 	/* Parse dcd configuration file */
@@ -789,11 +806,19 @@ static void imximage_set_header(void *ptr, struct stat *sbuf, int ifd,
 	 */
 
 	switch (imximage_version) {
-		case IMXIMAGE_V3:
-			*header_size_ptr = ROUND((sbuf->st_size + imximage_ivt_offset), 4096) + imximage_init_loadsize;
+		case IMXIMAGE_V3: {
+			if (secure_callback_ptr && imximage_scc_size) {
+				imx_header_v3_t *hdr_v3 = &imxhdr->header.hdr_v3;
+				flash_header_v3_t *fhdr_v3 = &hdr_v3->fhdr;
+				*secure_callback_ptr = (uint32_t)fhdr_v3->self + sbuf->st_size;
+				*auth_length_ptr = sbuf->st_size;
+			}
+			*header_size_ptr = ROUND(sbuf->st_size, 4096) + imximage_init_loadsize +
+					imximage_scc_size + imximage_init_loadsize;
 			break;
+		}
 		default:
-	*header_size_ptr = ROUND((sbuf->st_size + imximage_ivt_offset), 4096);
+			*header_size_ptr = ROUND((sbuf->st_size + imximage_ivt_offset), 4096);
 			break;
 	}
 
