@@ -515,6 +515,10 @@ config TARGET_S32V234FVB
 	bool "Support s32v234fvb"
 	select ARM64
 
+config TARGET_S32V234PCIE
+	bool "Support s32v234pcie"
+	select ARM64
+
 config TARGET_S32V234TMDP
 	bool "Support s32v234tmdp"
 	select ARM64
@@ -835,6 +839,7 @@ source "board/freescale/mx53loco/Kconfig"
 source "board/freescale/mx53smd/Kconfig"
 source "board/freescale/s32v234evb/Kconfig"
 source "board/freescale/s32v234fvb/Kconfig"
+source "board/freescale/s32v234pcie/Kconfig"
 source "board/freescale/s32v234tmdp/Kconfig"
 source "board/freescale/vf610twr/Kconfig"
 source "board/gumstix/pepper/Kconfig"
