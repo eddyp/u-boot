@@ -66,7 +66,8 @@
 
 /* Generic Timer Definitions */
 #define CONFIG_SYS_GENERIC_TIMER
-#define COUNTER_FREQUENCY               (25000000)     /* 25MHz */
+/* by default the GENERIC_TIMER FREQUENCY is IRC/4 */
+#define COUNTER_FREQUENCY               (12000000)     /* 12MHz */
 #define CONFIG_SYS_FSL_ERRATUM_A008585
 
 /* Size of malloc() pool */
@@ -262,7 +263,7 @@
 #define CONFIG_SYS_MEMTEST_END		(DDR_BASE_ADDR + (DDR_SIZE - 1))
 
 #define CONFIG_SYS_LOAD_ADDR		CONFIG_LOADADDR
-#define CONFIG_SYS_HZ				1000
+#define CONFIG_SYS_HZ			1000
 
 #define CONFIG_SYS_TEXT_BASE		0x3E820000 /* SDRAM */
 #define CONFIG_SYS_TEXT_OFFSET		0x00020000
