@@ -128,6 +128,7 @@
 #define CONFIG_PHY_MICREL
 #define CONFIG_PHY_MICREL_KSZ9031
 
+
 /* I2C Configs */
 #define CONFIG_CMD_I2C
 #define CONFIG_HARD_I2C
