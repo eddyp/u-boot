@@ -21,6 +21,9 @@
 #include <errno.h>
 #include <linux/err.h>
 #include <linux/compiler.h>
+#ifdef CONFIG_PHY_RGMII_DIRECT_CONNECTED
+#include <fixed_phy.h>
+#endif
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -504,6 +507,10 @@ int phy_init(void)
 	phy_vitesse_init();
 #endif
 
+#ifdef CONFIG_PHY_RGMII_DIRECT_CONNECTED
+	phy_fixed_init();
+#endif
+
 	return 0;
 }
 
@@ -640,6 +647,7 @@ static struct phy_device *phy_device_create(struct mii_dev *bus, int addr,
  */
 int __weak get_phy_id(struct mii_dev *bus, int addr, int devad, u32 *phy_id)
 {
+#ifndef CONFIG_PHY_RGMII_DIRECT_CONNECTED	
 	int phy_reg;
 
 	/* Grab the bits from PHYIR1, and put them
@@ -658,8 +666,11 @@ int __weak get_phy_id(struct mii_dev *bus, int addr, int devad, u32 *phy_id)
 		return -EIO;
 
 	*phy_id |= (phy_reg & 0xffff);
-
+#else
+	*phy_id = FIXED_PHY_UID;
+#endif
 	return 0;
+	
 }
 
 static struct phy_device *create_phy_by_mask(struct mii_dev *bus,
@@ -739,6 +750,7 @@ static struct phy_device *get_phy_device(struct mii_dev *bus, int addr,
 
 int phy_reset(struct phy_device *phydev)
 {
+#ifndef CONFIG_PHY_RGMII_DIRECT_CONNECTED	
 	int reg;
 	int timeout = 500;
 	int devad = MDIO_DEVAD_NONE;
@@ -784,6 +796,7 @@ int phy_reset(struct phy_device *phydev)
 		puts("PHY reset timed out\n");
 		return -1;
 	}
+#endif	
 
 	return 0;
 }
