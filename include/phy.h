@@ -255,6 +255,7 @@ int phy_broadcom_init(void);
 int phy_cortina_init(void);
 int phy_davicom_init(void);
 int phy_et1011c_init(void);
+int phy_fixed_init(void);
 int phy_lxt_init(void);
 int phy_marvell_init(void);
 int phy_micrel_init(void);
@@ -264,6 +265,7 @@ int phy_smsc_init(void);
 int phy_teranetics_init(void);
 int phy_ti_init(void);
 int phy_vitesse_init(void);
+
 
 int board_phy_config(struct phy_device *phydev);
 int get_phy_id(struct mii_dev *bus, int addr, int devad, u32 *phy_id);

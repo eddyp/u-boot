@@ -21,9 +21,7 @@
 #include <errno.h>
 #include <linux/err.h>
 #include <linux/compiler.h>
-#ifdef CONFIG_PHY_RGMII_DIRECT_CONNECTED
-#include <fixed_phy.h>
-#endif
+
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -647,7 +645,6 @@ static struct phy_device *phy_device_create(struct mii_dev *bus, int addr,
  */
 int __weak get_phy_id(struct mii_dev *bus, int addr, int devad, u32 *phy_id)
 {
-#ifndef CONFIG_PHY_RGMII_DIRECT_CONNECTED	
 	int phy_reg;
 
 	/* Grab the bits from PHYIR1, and put them
@@ -666,11 +663,8 @@ int __weak get_phy_id(struct mii_dev *bus, int addr, int devad, u32 *phy_id)
 		return -EIO;
 
 	*phy_id |= (phy_reg & 0xffff);
-#else
-	*phy_id = FIXED_PHY_UID;
-#endif
+
 	return 0;
-	
 }
 
 static struct phy_device *create_phy_by_mask(struct mii_dev *bus,
