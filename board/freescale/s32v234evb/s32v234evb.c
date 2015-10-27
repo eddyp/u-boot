@@ -29,6 +29,8 @@
 #error "Please define the DDR type for S32V234 board!"
 #endif
 #include <asm/arch/clock.h>
+#include <fdt_support.h>
+#include <libfdt.h>
 #include <mmc.h>
 #include <fsl_esdhc.h>
 #include <miiphy.h>
@@ -247,7 +249,7 @@ int board_phy_config(struct phy_device *phydev)
 }
 
 #ifdef CONFIG_DCU_QOS_FIX
-int board_dcu_qos()
+int board_dcu_qos(void)
 {
 	writel(0x0, 0x40012380);
 	writel(0x0, 0x40012384);
@@ -275,13 +277,14 @@ int board_dcu_qos()
 	writel(0x0, 0x40012E84);
 	writel(0x0, 0x40012F80);
 	writel(0x0, 0x40012F84);
-	
+
 	return 0;
 }
 #endif
 
 int board_early_init_f(void)
 {
+// start_secondary_cores();
 	clock_init();
 	mscm_init();
 
@@ -313,3 +316,12 @@ int checkboard(void)
 
 	return 0;
 }
+
+
+#if defined(CONFIG_OF_FDT) && defined(CONFIG_OF_BOARD_SETUP)
+int ft_board_setup(void *blob, bd_t *bd)
+{
+	ft_cpu_setup(blob, bd);
+	return 0;
+}
+#endif /* defined(CONFIG_OF_FDT) && defined(CONFIG_OF_BOARD_SETUP) */
