@@ -21,7 +21,6 @@ obj-y				+= generic.o
 obj-y				+= lowlevel.o
 obj-y				+= cpu.o
 obj-y				+= cse.o
-obj-y += cpu.o
 obj-$(CONFIG_SYS_PIT_TIMER)	+= timer.o
 obj-$(CONFIG_S32V234_LPDDR2)	+= lpddr2.o
 obj-$(CONFIG_S32V234_DDR3)	+= ddr3.o
