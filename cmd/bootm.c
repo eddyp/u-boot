@@ -43,13 +43,14 @@ static int do_imls(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]);
 
 /* TODO: Implement a generic secure boot API */
 #ifdef CONFIG_CSE3
+
+extern int cse_init(void);
+
 #ifdef CONFIG_SECURE_BOOT
 
 extern int secure_boot(void);
 
 #endif /* CONFIG_SECURE_BOOT */
-
-extern int cse_init(void);
 
 #endif /* CONFIG_CSE3 */
 
