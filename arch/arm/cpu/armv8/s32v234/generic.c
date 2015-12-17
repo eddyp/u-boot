@@ -27,6 +27,14 @@
 #include <div64.h>
 #include <errno.h>
 
+u32 get_cpu_rev(void)
+{
+    struct mscm_ir *mscmir = (struct mscm_ir *)MSCM_BASE_ADDR;
+	u32 cpu = readl(&mscmir->cpxtype);
+
+	return cpu;
+}
+
 static uintptr_t get_pllfreq(	u32 pll, u32 refclk_freq, u32 plldv,
 								u32 pllfd, u32 selected_output  )
 {
