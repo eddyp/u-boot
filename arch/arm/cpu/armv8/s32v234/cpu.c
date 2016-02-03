@@ -30,6 +30,10 @@ u32 cpu_mask(void)
 #define CONFIG_SYS_FSL_DRAM_SIZE2       0x20000000UL
 #define CONFIG_SYS_FSL_PERIPH_BASE      0x40000000UL
 #define CONFIG_SYS_FSL_PERIPH_SIZE      0x40000000UL
+#define CONFIG_SYS_FSL_FLASH0_BASE      0x20000000UL
+#define CONFIG_SYS_FSL_FLASH0_SIZE      0x10000000UL
+#define CONFIG_SYS_FSL_FLASH1_BASE      0x60000000UL
+#define CONFIG_SYS_FSL_FLASH1_SIZE      0x10000000UL
 
 static struct mm_region s32v234_mem_map[] = {
 	{
@@ -53,6 +57,16 @@ static struct mm_region s32v234_mem_map[] = {
 		.base = CONFIG_SYS_FSL_DRAM_BASE2,
 		.size = CONFIG_SYS_FSL_DRAM_SIZE2,
 		.attrs = PTE_BLOCK_MEMTYPE(MT_NORMAL_NC) |
+			 PTE_BLOCK_OUTER_SHARE
+	}, {
+		.base = CONFIG_SYS_FSL_FLASH0_BASE,
+		.size = CONFIG_SYS_FSL_FLASH0_SIZE,
+		.attrs = PTE_BLOCK_MEMTYPE(MT_NORMAL) |
+			 PTE_BLOCK_OUTER_SHARE
+	}, {
+		.base = CONFIG_SYS_FSL_FLASH1_BASE,
+		.size = CONFIG_SYS_FSL_FLASH1_SIZE,
+		.attrs = PTE_BLOCK_MEMTYPE(MT_NORMAL) |
 			 PTE_BLOCK_OUTER_SHARE
 	}, {
 		/* List terminator */
