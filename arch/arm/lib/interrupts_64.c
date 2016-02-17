@@ -10,20 +10,27 @@
 #include <efi_loader.h>
 
 
-int interrupt_init(void)
+int __interrupt_init(void)
 {
 	return 0;
 }
 
-void enable_interrupts(void)
+void __enable_interrupts(void)
 {
 	return;
 }
 
-int disable_interrupts(void)
+int __disable_interrupts(void)
 {
 	return 0;
 }
+
+int interrupt_init(void)
+        __attribute__((weak, alias("__interrupt_init")));
+void enable_interrupts(void)
+        __attribute__((weak, alias("__enable_interrupts")));
+int disable_interrupts(void)
+        __attribute__((weak, alias("__disable_interrupts")));
 
 void show_regs(struct pt_regs *regs)
 {
@@ -93,9 +100,9 @@ void do_sync(struct pt_regs *pt_regs, unsigned int esr)
 }
 
 /*
- * do_irq handles the Irq exception.
+ * __do_irq handles the Irq exception.
  */
-void do_irq(struct pt_regs *pt_regs, unsigned int esr)
+void __do_irq(struct pt_regs *pt_regs, unsigned int esr)
 {
 	efi_restore_gd();
 	printf("\"Irq\" handler, esr 0x%08x\n", esr);
@@ -104,15 +111,20 @@ void do_irq(struct pt_regs *pt_regs, unsigned int esr)
 }
 
 /*
- * do_fiq handles the Fiq exception.
+ * __do_fiq handles the Fiq exception.
  */
-void do_fiq(struct pt_regs *pt_regs, unsigned int esr)
+void __do_fiq(struct pt_regs *pt_regs, unsigned int esr)
 {
 	efi_restore_gd();
 	printf("\"Fiq\" handler, esr 0x%08x\n", esr);
 	show_regs(pt_regs);
 	panic("Resetting CPU ...\n");
 }
+
+void do_irq(struct pt_regs *pt_regs, unsigned int esr)
+        __attribute__((weak, alias("__do_irq")));
+void do_fiq(struct pt_regs *pt_regs, unsigned int esr)
+        __attribute__((weak, alias("__do_fiq")));
 
 /*
  * do_error handles the Error exception.
