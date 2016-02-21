@@ -19,7 +19,6 @@ u32 cpu_mask(void)
 {
 	return readl(MC_ME_CS);
 }
-
 #ifndef CONFIG_SYS_DCACHE_OFF
 
 #define CONFIG_SYS_FSL_IRAM_BASE        0x3e800000UL
@@ -30,10 +29,6 @@ u32 cpu_mask(void)
 #define CONFIG_SYS_FSL_DRAM_SIZE2       0x20000000UL
 #define CONFIG_SYS_FSL_PERIPH_BASE      0x40000000UL
 #define CONFIG_SYS_FSL_PERIPH_SIZE      0x40000000UL
-#define CONFIG_SYS_FSL_FLASH0_BASE      0x20000000UL
-#define CONFIG_SYS_FSL_FLASH0_SIZE      0x10000000UL
-#define CONFIG_SYS_FSL_FLASH1_BASE      0x60000000UL
-#define CONFIG_SYS_FSL_FLASH1_SIZE      0x10000000UL
 
 static struct mm_region s32v234_mem_map[] = {
 	{
