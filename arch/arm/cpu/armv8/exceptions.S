@@ -107,12 +107,15 @@ _do_sync:
 _do_irq:
 	exception_entry
 	bl	do_irq
+#ifdef CONFIG_S32V234
 	b	exception_exit
-
+#endif
 _do_fiq:
 	exception_entry
 	bl	do_fiq
+#ifdef CONFIG_S32V234
 	b	exception_exit
+#endif
 
 _do_error:
 	exception_entry
