@@ -143,9 +143,7 @@
 #define CONFIG_SYS_I2C_SPEED	100000
 #define CONFIG_SYS_I2C_SLAVE	0x8
 
-#if 1 /* Disable until the FLASH will be implemented */
 #define CONFIG_S32V234_FLASH
-#endif
 
 /* memory mapped external flash */
 #define CONFIG_SYS_FSL_FLASH0_BASE      0x20000000
