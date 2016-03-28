@@ -316,6 +316,7 @@ void imx_get_mac_from_fuse(int dev_id, unsigned char *mac)
 #if defined(CONFIG_DISPLAY_CPUINFO)
 static char *get_reset_cause(void)
 {
+#if 0
     u32 cause = 0;
 /* b47303
  * The cause of reset is determined on s32v234 using MC_RGM module.
@@ -323,7 +324,6 @@ static char *get_reset_cause(void)
  * information.
  * */
 
-#if 0
     switch (cause) {
     case 0x08:
         return "WDOG";
@@ -336,6 +336,8 @@ static char *get_reset_cause(void)
     default:
         return "unknown reset";
     }
+#else
+    return "unknown reset";
 #endif /* to be used as implementation model */
 }
 
