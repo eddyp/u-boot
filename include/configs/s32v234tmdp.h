@@ -54,6 +54,8 @@
 
 #define CONFIG_SKIP_LOWLEVEL_INIT
 
+#define CONFIG_SYS_FULL_VA
+
 /* Config CACHE */
 #define CONFIG_CMD_CACHE
 
