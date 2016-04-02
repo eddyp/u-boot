@@ -275,9 +275,10 @@
 
 
 /* Physical memory map */
-#define CONFIG_NR_DRAM_BANKS	1
-#define PHYS_SDRAM				(DDR_BASE_ADDR)
-#define PHYS_SDRAM_SIZE			(16 * 1024 * 1024)
+/* EVB board has 2x256 MB DDR chips, DDR0 and DDR1, u-boot is using just one */
+#define CONFIG_NR_DRAM_BANKS		1
+#define PHYS_SDRAM			(DDR_BASE_ADDR)
+#define PHYS_SDRAM_SIZE			(256 * 1024 * 1024)
 
 #define CONFIG_SYS_SDRAM_BASE		PHYS_SDRAM
 #define CONFIG_SYS_INIT_RAM_ADDR	IRAM_BASE_ADDR
