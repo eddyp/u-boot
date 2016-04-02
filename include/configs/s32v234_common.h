@@ -93,6 +93,12 @@
 #endif
 #define CONFIG_BOARD_EARLY_INIT_F
 
+/* Config CACHE */
+#define CONFIG_CMD_CACHE
+
+/* config mmu */
+#define CONFIG_SYS_FULL_VA
+
 #define CONFIG_FSL_LINFLEXUART
 
 /* Allow to overwrite serial and ethaddr */
