@@ -11,7 +11,6 @@
 #include <asm/io.h>
 #include <asm/arch/mc_me_regs.h>
 #include "cpu.h"
-#include "mp.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
