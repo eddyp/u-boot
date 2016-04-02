@@ -144,8 +144,10 @@ static u32 get_sys_clk(u32 number)
 	switch (number) {
 		case 3:
 			sysclk_div_number = 0;
+			break;
 		case 6:
 			sysclk_div_number = 1;
+			break;
 		default:
 			printf("unsupported system clock \n");
 			return -1;
