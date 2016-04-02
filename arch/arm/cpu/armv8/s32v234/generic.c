@@ -30,7 +30,7 @@
 static u32 get_plldv_rfdphi_div( u32 plldv )
 {
     u32 plldv_rfdphi = (plldv & PLLDIG_PLLDV_RFDPHI_MASK) >> PLLDIG_PLLDV_RFDPHI_OFFSET;
-    
+
     if( plldv_rfdphi & ~PLLDIG_PLLDV_RFDPHI_MAXVALUE )
     {
         printf("Error: plldv_rfdphi with value %d is incorrect set \n", plldv_rfdphi);
@@ -153,6 +153,7 @@ static u32 get_peripherals_clk(void)
 #else
 	return 0;
 #endif
+	return 0;
 }
 
 static u32 get_uart_clk(void)
@@ -315,10 +316,10 @@ void imx_get_mac_from_fuse(int dev_id, unsigned char *mac)
 #if defined(CONFIG_DISPLAY_CPUINFO)
 static char *get_reset_cause(void)
 {
-    u32 cause;
+    u32 cause = 0;
 #if 0 /* b46902 */
     struct src *src_regs = (struct src *)SRC_BASE_ADDR;
- 
+
     cause = readl(&src_regs->srsr);
     writel(cause, &src_regs->srsr);
     cause &= 0xff;
