@@ -35,11 +35,6 @@
 
 #define CONFIG_MACH_TYPE		4146
 
-/* Config CACHE */
-#define CONFIG_CMD_CACHE
-
-#define CONFIG_SYS_FULL_VA
-
 /* Enable DCU QoS fix */
 #define CONFIG_DCU_QOS_FIX
 
