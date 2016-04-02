@@ -346,7 +346,6 @@ void imx_get_mac_from_fuse(int dev_id, unsigned char *mac)
 #if defined(CONFIG_DISPLAY_CPUINFO)
 static char *get_reset_cause(void)
 {
- */
 	u32 cause = readl(MC_RGM_BASE_ADDR + 0x300);
 
 	switch (cause) {

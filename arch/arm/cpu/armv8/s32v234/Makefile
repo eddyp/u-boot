@@ -17,6 +17,5 @@
 # MA 02111-1307 USA
 #
 
-obj-y   += generic.o
-
-
+obj-y += generic.o
+obj-y += cpu.o

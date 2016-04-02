@@ -205,6 +205,9 @@
 /* MBIST Peripheral Control Register	*/
 #define MC_ME_PCTL236	(MC_ME_BASE_ADDR + 0x000001A9)
 
+/* Core status register */
+#define MC_ME_CS               (MC_ME_BASE_ADDR + 0x000001C0)
+
 #endif
 
 #endif /*__ARCH_ARM_MACH_S32V234_MCME_REGS_H__ */
