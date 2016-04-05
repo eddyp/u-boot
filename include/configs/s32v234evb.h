@@ -12,6 +12,8 @@
 #include <asm/arch/imx-regs.h>
 
 #define CONFIG_S32V234
+#define CONFIG_DM
+
 #define CONFIG_DISPLAY_CPUINFO
 #define CONFIG_DISPLAY_BOARDINFO
 
@@ -60,8 +62,12 @@
 #endif
 #define CONFIG_BOARD_EARLY_INIT_F
 
+#define CONFIG_DM_SERIAL
 #define CONFIG_FSL_LINFLEXUART
-#define LINFLEXUART_BASE			LINFLEXD0_BASE_ADDR
+#define LINFLEXUART_BASE		LINFLEXD0_BASE_ADDR
+
+#define CONFIG_DEBUG_UART_LINFLEXUART
+#define CONFIG_DEBUG_UART_BASE		LINFLEXUART_BASE
 
 /* Allow to overwrite serial and ethaddr */
 #define CONFIG_ENV_OVERWRITE
