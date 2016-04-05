@@ -85,13 +85,13 @@ int cpu_numcores(void)
 int arch_early_init_r(void)
 {
 	int rv;
-	asm volatile("dsb sy");
+	asm volatile ("dsb sy");
 	rv = fsl_s32v234_wake_seconday_cores();
 
 	if (rv)
 		printf("Did not wake secondary cores\n");
 
-	asm volatile("sev");
+	asm volatile ("sev");
 	return 0;
 }
 #endif /* CONFIG_ARCH_EARLY_INIT_R */

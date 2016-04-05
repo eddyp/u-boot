@@ -49,7 +49,7 @@
 #define CPU_RELEASE_ADDR                (CONFIG_SYS_SDRAM_BASE + 0x7fff0)
 
 /* Generic Timer Definitions */
-#define COUNTER_FREQUENCY               (1000000000)     /* 1000MHz */
+#define COUNTER_FREQUENCY               (1000000000)	/* 1000MHz */
 #define CONFIG_SYS_FSL_ERRATUM_A008585
 
 /* Size of malloc() pool */
@@ -59,7 +59,6 @@
 #define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 2 * 1024 * 1024)
 #endif
 #define CONFIG_BOARD_EARLY_INIT_F
-
 
 #define CONFIG_FSL_LINFLEXUART
 #define LINFLEXUART_BASE			LINFLEXD0_BASE_ADDR
@@ -82,7 +81,7 @@
 #define CONFIG_CMD_MMC
 #define CONFIG_GENERIC_MMC
 /* #define CONFIG_CMD_EXT2 EXT2 Support */
-#define CONFIG_CMD_FAT  /* FAT support */
+#define CONFIG_CMD_FAT		/* FAT support */
 #define CONFIG_DOS_PARTITION
 
 #if 0
@@ -100,7 +99,7 @@
 #define CONFIG_PHY_MICREL
 #endif
 
-#if 0 /* Disable until the I2C driver will be updated */
+#if 0				/* Disable until the I2C driver will be updated */
 
 /* I2C Configs */
 #define CONFIG_CMD_I2C
@@ -110,7 +109,7 @@
 #define CONFIG_SYS_I2C_SPEED		100000
 #endif
 
-#if 0 /* Disable until the FLASH will be implemented */
+#if 0				/* Disable until the FLASH will be implemented */
 #define CONFIG_SYS_USE_NAND
 #endif
 
@@ -124,7 +123,7 @@
 #define CONFIG_SYS_MAX_NAND_DEVICE	1
 #define NAND_MAX_CHIPS			CONFIG_SYS_MAX_NAND_DEVICE
 #define CONFIG_SYS_NAND_SELECT_DEVICE
-#define CONFIG_SYS_64BIT_VSPRINTF  /* needed for nand_util.c */
+#define CONFIG_SYS_64BIT_VSPRINTF	/* needed for nand_util.c */
 #endif
 
 #define CONFIG_BOOTDELAY		3
@@ -229,8 +228,8 @@
 	   "else run netboot; fi"
 
 /* Miscellaneous configurable options */
-#define CONFIG_SYS_LONGHELP		/* undef to save memory */
-#define CONFIG_SYS_HUSH_PARSER		/* use "hush" command parser */
+#define CONFIG_SYS_LONGHELP	/* undef to save memory */
+#define CONFIG_SYS_HUSH_PARSER	/* use "hush" command parser */
 #define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
 #define CONFIG_SYS_PROMPT		"=> "
 #undef CONFIG_AUTO_COMPLETE
@@ -248,7 +247,7 @@
 #define CONFIG_SYS_LOAD_ADDR		CONFIG_LOADADDR
 #define CONFIG_SYS_HZ				1000
 
-#define CONFIG_SYS_TEXT_BASE		0x3E800000 /* SDRAM */
+#define CONFIG_SYS_TEXT_BASE		0x3E800000	/* SDRAM */
 
 #ifdef CONFIG_RUN_FROM_IRAM_ONLY
 #define CONFIG_SYS_MALLOC_BASE		(DDR_BASE_ADDR)
@@ -266,7 +265,6 @@
 #define CONFIG_BOOTP_PXE
 #define CONFIG_BOOTP_PXE_CLIENTARCH	0x100
 #endif
-
 
 /* Physical memory map */
 /* EVB board has 2x256 MB DDR chips, DDR0 and DDR1, u-boot is using just one */

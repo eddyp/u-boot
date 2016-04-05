@@ -80,7 +80,6 @@
 #define MC_CGM_ACn_SEL_VIDEOPLLDIVX		(0x9)
 #define MC_CGM_ACn_SEL_PERCLK			(0xA)
 
-
 /* PLLDIG PLL Divider Register (PLLDIG_PLLDV) */
 #define PLLDIG_PLLDV(pll)				((MC_CGM0_BASE_ADDR + 0x00000028) + ((pll) * 0x80))
 #define PLLDIG_PLLDV_MFD(div)			(PLLDIG_PLLDV_MFD_MASK & (div))
@@ -105,7 +104,6 @@
 #define PLLDIG_PLLDV_PREDIV_MAXVALUE	(0x7)
 #define PLLDIG_PLLDV_PREDIV_OFFSET		(12)
 
-
 /* PLLDIG PLL Fractional  Divide Register (PLLDIG_PLLFD) */
 #define PLLDIG_PLLFD(pll)				((MC_CGM0_BASE_ADDR + 0x00000030) + ((pll) * 0x80))
 #define PLLDIG_PLLFD_MFN_SET(val)		(PLLDIG_PLLFD_MFN_MASK & (val))
@@ -117,7 +115,6 @@
 #define PLLDIG_PLLCAL1_NDAC1_SET(val)	(PLLDIG_PLLCAL1_NDAC1_MASK & ((val) << PLLDIG_PLLCAL1_NDAC1_OFFSET))
 #define PLLDIG_PLLCAL1_NDAC1_OFFSET		(24)
 #define PLLDIG_PLLCAL1_NDAC1_MASK		(0x7F000000)
-
 
 /* Digital Frequency Synthesizer (DFS) */
 /* According to the manual there are 3 DFS modules only for ARM_PLL, DDR_PLL, ENET_PLL */

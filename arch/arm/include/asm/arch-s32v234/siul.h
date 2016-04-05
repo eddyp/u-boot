@@ -17,7 +17,6 @@
  * MA 02111-1307 USA
  */
 
-
 #ifndef __ARCH_ARM_MACH_S32V234_SIUL_H__
 #define __ARCH_ARM_MACH_S32V234_SIUL_H__
 
@@ -68,7 +67,6 @@
 #define SIUL2_MSCR_DDR_DO_TRIM_100PS	(2 << 30)
 #define SIUL2_MSCR_DDR_DO_TRIM_150PS	(3 << 30)
 
-
 #define SIUL2_MSCR_DDR_INPUT(v)		((v) & 0x20000000)
 #define SIUL2_MSCR_DDR_INPUT_CMOS	(0 << 29)
 #define SIUL2_MSCR_DDR_INPUT_DIFF_DDR	(1 << 29)
@@ -115,7 +113,6 @@
 #define SIUL2_MSCR_SRE_SPEED_HIGH_100	(2 << 14)
 #define SIUL2_MSCR_SRE_SPEED_HIGH_200	(3 << 14)
 
-
 #define SIUL2_MSCR_PUE(v)		((v) & 0x00002000)
 #define SIUL2_MSCR_PUE_EN		(1 << 13)
 
@@ -142,7 +139,6 @@
 #define SIUL2_MSCR_MUX_MODE_ALT1	(0x1)
 #define SIUL2_MSCR_MUX_MODE_ALT2	(0x2)
 #define SIUL2_MSCR_MUX_MODE_ALT3	(0x3)
-
 
 /* UART settings */
 #define SIUL2_UART0_TXD_PAD	12

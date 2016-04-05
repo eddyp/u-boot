@@ -154,6 +154,4 @@
 #define _DDR1_ODT1	308
 #define _DDR1_ZQ	309
 
-
 #endif
-
