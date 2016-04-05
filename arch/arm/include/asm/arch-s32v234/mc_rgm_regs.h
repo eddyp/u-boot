@@ -41,7 +41,4 @@
 #define F_ST_DONE			0x4
 #define F_EXT_RST			0x1
 
-
-
 #endif /* __ARCH_ARM_MACH_S32V234_MCRGM_REGS_H__ */
-

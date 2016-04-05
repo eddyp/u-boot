@@ -62,7 +62,6 @@
 #define MC_ME_MCTL_RUN2					(0x6 << 28)
 #define MC_ME_MCTL_RUN3					(0x7 << 28)
 
-
 /* MC_ME_ME */
 #define MC_ME_ME						(MC_ME_BASE_ADDR + 0x00000008)
 

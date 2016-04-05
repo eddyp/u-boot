@@ -31,54 +31,53 @@
 #define UARTSR_DRF          (1 << 2)
 #define UARTSR_RMB          (1 << 9)
 
-
 DECLARE_GLOBAL_DATA_PTR;
 
 struct linflex_fsl *base = (struct linflex_fsl *)LINFLEXUART_BASE;
 
 static void linflex_serial_setbrg(void)
 {
-    u32 clk = mxc_get_clock(MXC_UART_CLK);
-    u32 ibr, fbr;
-    
-    if (!gd->baudrate)
-        gd->baudrate = CONFIG_BAUDRATE;
+	u32 clk = mxc_get_clock(MXC_UART_CLK);
+	u32 ibr, fbr;
 
-    ibr = (u32)(clk / (16 * gd->baudrate));
-    fbr = (u32)(clk % (16* gd->baudrate))*16;
+	if (!gd->baudrate)
+		gd->baudrate = CONFIG_BAUDRATE;
 
-    __raw_writel(ibr, &base->linibrr);
-    __raw_writel(fbr, &base->linfbrr);
+	ibr = (u32) (clk / (16 * gd->baudrate));
+	fbr = (u32) (clk % (16 * gd->baudrate)) * 16;
 
+	__raw_writel(ibr, &base->linibrr);
+	__raw_writel(fbr, &base->linfbrr);
 }
 
 static int linflex_serial_getc(void)
 {
-    char c;
+	char c;
 
-    /* waiting for data reception complete - TODO: add a timeout */
-    while((__raw_readb(&base->uartsr) & UARTSR_DRF) != UARTSR_DRF){} 
+	/* waiting for data reception complete - TODO: add a timeout */
+	while ((__raw_readb(&base->uartsr) & UARTSR_DRF) != UARTSR_DRF);
 
-    /* waiting for data buffer to be ready - TODO: add a timeout */
+	/* waiting for data buffer to be ready - TODO: add a timeout */
 
-    while((__raw_readl(&base->uartsr) & UARTSR_RMB) != UARTSR_RMB){}
+	while ((__raw_readl(&base->uartsr) & UARTSR_RMB) != UARTSR_RMB);
 
-    c = __raw_readl(&base->bdrm);
-    __raw_writeb((__raw_readb(&base->uartsr)|(UARTSR_DRF|UARTSR_RMB)), &base->uartsr);
-    return c;
+	c = __raw_readl(&base->bdrm);
+	__raw_writeb((__raw_readb(&base->uartsr) | (UARTSR_DRF | UARTSR_RMB)),
+		     &base->uartsr);
+	return c;
 }
 
 static void linflex_serial_putc(const char c)
 {
-    if (c == '\n')
-        serial_putc('\r');
+	if (c == '\n')
+		serial_putc('\r');
 
-    __raw_writeb(c, &base->bdrl);
+	__raw_writeb(c, &base->bdrl);
 
-    /* waiting for data transmission completed - TODO: add a timeout */
-    while((__raw_readb(&base->uartsr) & UARTSR_DTF) != UARTSR_DTF){} 
+	/* waiting for data transmission completed - TODO: add a timeout */
+	while ((__raw_readb(&base->uartsr) & UARTSR_DTF) != UARTSR_DTF);
 
-    __raw_writeb((__raw_readb(&base->uartsr)|UARTSR_DTF), &base->uartsr);
+	__raw_writeb((__raw_readb(&base->uartsr) | UARTSR_DTF), &base->uartsr);
 }
 
 /*
@@ -86,13 +85,7 @@ static void linflex_serial_putc(const char c)
  */
 static int linflex_serial_tstc(void)
 {
-#if 0 /* This feature should be implemented when linflex driver will use fifos*/
-    if (__raw_readb(&base->urcfifo) == 0)
-        return 0;
-
-    return 1;
-#endif
-    return 0;
+	return 0;
 }
 
 /*
@@ -101,54 +94,54 @@ static int linflex_serial_tstc(void)
  */
 static int linflex_serial_init(void)
 {
-    volatile u32 ctrl;
+	volatile u32 ctrl;
 
-    /* set the Linflex in master mode amd activate by-pass filter */
-    ctrl = LINCR1_BF | LINCR1_MME;
-    __raw_writel(ctrl, &base->lincr1);
+	/* set the Linflex in master mode amd activate by-pass filter */
+	ctrl = LINCR1_BF | LINCR1_MME;
+	__raw_writel(ctrl, &base->lincr1);
 
-    /* init mode */
-    ctrl |= LINCR1_INIT;
-    __raw_writel(ctrl, &base->lincr1);
+	/* init mode */
+	ctrl |= LINCR1_INIT;
+	__raw_writel(ctrl, &base->lincr1);
 
-    /* waiting for init mode entry - TODO: add a timeout */
-    while((__raw_readl(&base->linsr) & LINSR_LINS_MASK) != LINSR_LINS_INITMODE){} 
+	/* waiting for init mode entry - TODO: add a timeout */
+	while ((__raw_readl(&base->linsr) & LINSR_LINS_MASK) !=
+	       LINSR_LINS_INITMODE);
 
+	/* set UART bit to allow writing other bits */
+	__raw_writel(UARTCR_UART, &base->uartcr);
 
-    /* set UART bit to allow writing other bits */
-    __raw_writel(UARTCR_UART, &base->uartcr);
+	/* provide data bits, parity, stop bit, etc */
+	serial_setbrg();
 
-    /* provide data bits, parity, stop bit, etc */
-    serial_setbrg();
+	/* 8 bit data, no parity, Tx and Rx enabled, UART mode */
+	__raw_writel(UARTCR_PC1 | UARTCR_RXEN | UARTCR_TXEN | UARTCR_PC0
+		     | UARTCR_WL0 | UARTCR_UART, &base->uartcr);
 
-    /* 8 bit data, no parity, Tx and Rx enabled, UART mode */
-    __raw_writel(UARTCR_PC1 | UARTCR_RXEN | UARTCR_TXEN | UARTCR_PC0
-                 | UARTCR_WL0 | UARTCR_UART, &base->uartcr);
-    
-    ctrl = __raw_readl(&base->lincr1);
-    ctrl &= ~LINCR1_INIT;
-    __raw_writel(ctrl, &base->lincr1); /* end init mode */
+	ctrl = __raw_readl(&base->lincr1);
+	ctrl &= ~LINCR1_INIT;
+	__raw_writel(ctrl, &base->lincr1);	/* end init mode */
 
-    return 0;
+	return 0;
 }
 
 static struct serial_device linflex_serial_drv = {
-    .name = "linflex_serial",
-    .start = linflex_serial_init,
-    .stop = NULL,
-    .setbrg = linflex_serial_setbrg,
-    .putc = linflex_serial_putc,
-    .puts = default_serial_puts,
-    .getc = linflex_serial_getc,
-    .tstc = linflex_serial_tstc,
+	.name = "linflex_serial",
+	.start = linflex_serial_init,
+	.stop = NULL,
+	.setbrg = linflex_serial_setbrg,
+	.putc = linflex_serial_putc,
+	.puts = default_serial_puts,
+	.getc = linflex_serial_getc,
+	.tstc = linflex_serial_tstc,
 };
 
 void linflex_serial_initialize(void)
 {
-    serial_register(&linflex_serial_drv);
+	serial_register(&linflex_serial_drv);
 }
 
 __weak struct serial_device *default_serial_console(void)
 {
-    return &linflex_serial_drv;
+	return &linflex_serial_drv;
 }

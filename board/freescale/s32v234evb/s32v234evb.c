@@ -68,7 +68,7 @@ static void setup_iomux_uart(void)
 	/* set TXD - MSCR[12] PA12 */
 	writel(SIUL2_UART_TXD, SIUL2_MSCRn(SIUL2_UART0_TXD_PAD));
 
-	/* set RXD - MSCR[11] - PA11*/
+	/* set RXD - MSCR[11] - PA11 */
 	writel(SIUL2_UART_MSCR_RXD, SIUL2_MSCRn(SIUL2_UART0_MSCR_RXD_PAD));
 
 	/* set RXD - IMCR[200] - 200 */
@@ -88,7 +88,7 @@ static void setup_iomux_i2c(void)
 #ifdef CONFIG_SYS_USE_NAND
 void setup_iomux_nfc(void)
 {
-	/*TODO: Implement nfc iomux when it is activated.*/
+	/*TODO: Implement nfc iomux when it is activated. */
 }
 #endif
 
@@ -103,7 +103,7 @@ int board_mmc_getcd(struct mmc *mmc)
 	return 1;
 }
 
-int board_mmc_init(bd_t *bis)
+int board_mmc_init(bd_t * bis)
 {
 	esdhc_cfg[0].sdhc_clk = mxc_get_clock(MXC_USDHC_CLK);
 
