@@ -124,6 +124,11 @@
 #define LINFLEXUART_BASE	LINFLEXD1_BASE_ADDR
 #endif
 
+#ifdef CONFIG_DM
+#define CONFIG_DEBUG_UART_LINFLEXUART
+#define CONFIG_DEBUG_UART_BASE		LINFLEXUART_BASE
+#endif
+
 /* Allow to overwrite serial and ethaddr */
 #define CONFIG_ENV_OVERWRITE
 #define CONFIG_SYS_UART_PORT		(1)

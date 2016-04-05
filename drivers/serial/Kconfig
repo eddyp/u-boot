@@ -224,6 +224,8 @@ config UNIPHIER_SERIAL
 	  serial ports, say Y to this option. If unsure, say N.
 
 config FSL_LINFLEXUART
+	select DM_SERIAL if DM
+	select SYS_MALLOC_F if DM
 	bool "Freescale Linflexuart serial port support"
 	help
 	  If you have enabled the linflexuart serial port on the Freescale SoCs,

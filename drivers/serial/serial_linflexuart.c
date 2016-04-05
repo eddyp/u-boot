@@ -1,23 +1,14 @@
 /*
- * Copyright 2013-2015 Freescale Semiconductor, Inc.
+ * (C) Copyright 2013-2016 Freescale Semiconductor, Inc.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
+ * SPDX-License-Identifier:     GPL-2.0+
  */
 
 #include <common.h>
+#ifdef CONFIG_DM
+#include <dm.h>
+#include <errno.h>
+#endif
 #include <watchdog.h>
 #include <asm/io.h>
 #include <serial.h>
@@ -53,15 +44,17 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-struct linflex_fsl *base = (struct linflex_fsl *)LINFLEXUART_BASE;
+#ifndef CONFIG_DM_SERIAL
+struct linflex_fsl *lfbase = (struct linflex_fsl *)LINFLEXUART_BASE;
+#endif
 
-static void linflex_serial_setbrg(void)
+static void _linflex_serial_setbrg(struct linflex_fsl *base, int baudrate)
 {
     u32 clk = mxc_get_clock(MXC_UART_CLK);
     u32 ibr, fbr;
 
-    if (!gd->baudrate)
-        gd->baudrate = CONFIG_BAUDRATE;
+	if (!baudrate)
+		baudrate = CONFIG_BAUDRATE;
 
     ibr = (u32)(clk / (16 * gd->baudrate));
     fbr = (u32)(clk % (16* gd->baudrate))*16;
@@ -71,40 +64,46 @@ static void linflex_serial_setbrg(void)
 
 }
 
-static int linflex_serial_getc(void)
+static int _linflex_serial_getc(struct linflex_fsl *base)
 {
-    while ((__raw_readl(&base->uartsr) & UARTSR_RFE) == UARTSR_RFE) {}
+#ifndef CONFIG_DM_SERIAL
+	while ((__raw_readl(&base->uartsr) & UARTSR_RFE) == UARTSR_RFE) {}
 
-    return __raw_readb(&base->bdrm);
+#else
+	if ((__raw_readl(&base->uartsr) & UARTSR_RFE))
+		return -EAGAIN;
+
+#endif
+
+	return __raw_readb(&base->bdrm);
 }
 
-static void linflex_serial_putc(const char c)
+static int _linflex_serial_putc(struct linflex_fsl *base, const char c)
 {
-    if (c == '\n')
-        serial_putc('\r');
+	#ifndef CONFIG_DM_SERIAL
+	if (c == '\n')
+		serial_putc('\r');
 
-    /* wait for Tx FIFO not full */
-    while ((__raw_readb(&base->uartsr) & UARTSR_DTF)) {}
+	/* wait for Tx FIFO not full */
+	while ((__raw_readb(&base->uartsr) & UARTSR_DTF)) {}
+	#else
+	if ((__raw_readb(&base->uartsr) & UARTSR_DTF))
+		return -EAGAIN;
+	#endif
 
-    __raw_writeb(c, &base->bdrl);
-}
+	__raw_writeb(c, &base->bdrl);
 
-/*
- * Test whether a character is in the RX buffer
- */
-static int linflex_serial_tstc(void)
-{
-    if ((__raw_readb(&base->uartsr) & UARTSR_RFE) == UARTSR_RFE)
-        return 0;
+	if ((__raw_readb(&base->uartsr) & UARTSR_RFE) == UARTSR_RFE)
+		return 0;
 
-    return 1;
+	return 1;
 }
 
 /*
  * Initialise the serial port with the given baudrate. The settings
  * are always 8 data bits, no parity, 1 stop bit, no start bits.
  */
-static int linflex_serial_init(void)
+static int _linflex_serial_init(struct linflex_fsl *base)
 {
     volatile u32 ctrl;
 
@@ -135,15 +134,47 @@ static int linflex_serial_init(void)
     return 0;
 }
 
+#ifndef CONFIG_DM_SERIAL
+/*
+ * Test whether a character is in the RX buffer
+ */
+static int _linflex_serial_tstc(void)
+{
+	if ((__raw_readb(&lfbase->uartsr) & UARTSR_RFE) == UARTSR_RFE)
+		return 0;
+
+    return 1;
+}
+
+static int nondm_linflex_serial_init(void)
+{
+	return _linflex_serial_init(lfbase);
+}
+
+static void nondm_linflex_serial_setbrg(void)
+{
+	_linflex_serial_setbrg(lfbase, CONFIG_BAUDRATE);
+}
+
+static void nondm_linflex_serial_putc(const char c)
+{
+	_linflex_serial_putc(lfbase,c);
+}
+
+static int nondm_linflex_serial_getc(void)
+{
+	return _linflex_serial_getc(lfbase);
+}
+
 static struct serial_device linflex_serial_drv = {
-    .name = "linflex_serial",
-    .start = linflex_serial_init,
-    .stop = NULL,
-    .setbrg = linflex_serial_setbrg,
-    .putc = linflex_serial_putc,
-    .puts = default_serial_puts,
-    .getc = linflex_serial_getc,
-    .tstc = linflex_serial_tstc,
+	.name = "linflex_serial",
+	.start = nondm_linflex_serial_init,
+	.stop = NULL,
+	.setbrg = nondm_linflex_serial_setbrg,
+	.putc = nondm_linflex_serial_putc,
+	.puts = default_serial_puts,
+	.getc = nondm_linflex_serial_getc,
+	.tstc = _linflex_serial_tstc,
 };
 
 void linflex_serial_initialize(void)
@@ -155,3 +186,107 @@ __weak struct serial_device *default_serial_console(void)
 {
     return &linflex_serial_drv;
 }
+#endif /* ifndef(CONFIG_DM_SERIAL) */
+
+#ifdef CONFIG_DM_SERIAL
+
+struct linflex_serial_platdata {
+	struct linflex_fsl *base_addr;
+	u8 port_id; /* do we need this? */
+};
+
+struct linflex_serial_priv {
+	struct linflex_fsl *lfuart;
+};
+
+int linflex_serial_setbrg(struct udevice *dev, int baudrate)
+{
+	struct linflex_serial_priv *priv = dev_get_priv(dev);
+
+	_linflex_serial_setbrg(priv->lfuart, baudrate);
+
+	return 0;
+}
+
+static int linflex_serial_getc(struct udevice *dev)
+{
+	struct linflex_serial_priv *priv = dev_get_priv(dev);
+
+	return _linflex_serial_getc(priv->lfuart);
+}
+
+static int linflex_serial_putc(struct udevice *dev, const char ch)
+{
+
+	struct linflex_serial_priv *priv = dev_get_priv(dev);
+
+	return _linflex_serial_putc(priv->lfuart, ch);
+}
+
+static int linflex_serial_pending(struct udevice *dev, bool input)
+{
+	struct linflex_serial_priv *priv = dev_get_priv(dev);
+	uint32_t uartsr = __raw_readl(&priv->lfuart->uartsr);
+
+	if (input)
+		return ((uartsr & UARTSR_DRF) && (uartsr & UARTSR_RMB)) ? 1 : 0;
+	else
+		return uartsr & UARTSR_DTF ? 0 : 1;
+}
+
+static void linflex_serial_init_internal(struct linflex_fsl *lfuart)
+{
+	_linflex_serial_init(lfuart);
+	_linflex_serial_setbrg(lfuart, CONFIG_BAUDRATE);
+	return;
+}
+
+static int linflex_serial_probe(struct udevice *dev)
+{
+	struct linflex_serial_platdata *plat = dev->platdata;
+	struct linflex_serial_priv *priv = dev_get_priv(dev);
+
+	priv->lfuart = (struct linflex_fsl *)plat->base_addr;
+	linflex_serial_init_internal(priv->lfuart);
+
+	return 0;
+}
+
+static const struct dm_serial_ops linflex_serial_ops = {
+	.putc = linflex_serial_putc,
+	.pending = linflex_serial_pending,
+	.getc = linflex_serial_getc,
+	.setbrg = linflex_serial_setbrg,
+};
+
+U_BOOT_DRIVER(serial_linflex) = {
+	.name	= "serial_linflex",
+	.id	= UCLASS_SERIAL,
+	.probe = linflex_serial_probe,
+	.ops	= &linflex_serial_ops,
+	.flags = DM_FLAG_PRE_RELOC,
+	.priv_auto_alloc_size	= sizeof(struct linflex_serial_priv),
+};
+#endif
+
+#ifdef CONFIG_DEBUG_UART_LINFLEXUART
+
+#include <debug_uart.h>
+
+
+static inline void _debug_uart_init(void)
+{
+	struct linflex_fsl *base = (struct linflex_fsl *)CONFIG_DEBUG_UART_BASE;
+
+	linflex_serial_init_internal(base);
+}
+
+static inline void _debug_uart_putc(int ch)
+{
+	struct linflex_fsl *base = (struct linflex_fsl *)CONFIG_DEBUG_UART_BASE;
+
+	/* XXX: Is this OK? Should this use the non-DM version? */
+	_linflex_serial_putc(base, ch);
+}
+
+#endif /* CONFIG_DEBUG_UART_LINFLEXUART */
