@@ -27,7 +27,6 @@ void setup_iomux_ddr(void)
 
 void ddr_phy_init(void)
 {
-	/* TODO: Add initialisation code for ddr phy. */
 }
 
 void ddr_ctrl_init(void)
@@ -64,18 +63,15 @@ static void setup_iomux_uart(void)
 
 static void setup_iomux_enet(void)
 {
-	/* TODO: Implement enet iomux when it is activated. */
 }
 
 static void setup_iomux_i2c(void)
 {
-	/* TODO: Implement i2c iomux when it is activated. */
 }
 
 #ifdef CONFIG_SYS_USE_NAND
 void setup_iomux_nfc(void)
 {
-	/*TODO: Implement nfc iomux when it is activated. */
 }
 #endif
 
