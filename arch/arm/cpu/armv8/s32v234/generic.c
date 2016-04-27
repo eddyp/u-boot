@@ -23,9 +23,7 @@ u32 get_cpu_rev(void)
 	return cpu;
 }
 
-#ifdef CONFIG_FSL_ESDHC
 DECLARE_GLOBAL_DATA_PTR;
-#endif
 
 static uintptr_t get_pllfreq(u32 pll, u32 refclk_freq, u32 plldv,
 			     u32 pllfd, u32 selected_output)
