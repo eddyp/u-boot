@@ -318,17 +318,7 @@ static char *get_reset_cause(void)
 
 void reset_cpu(ulong addr)
 {
-#if 0				/* b46902 */
-	struct src *src_regs = (struct src *)SRC_BASE_ADDR;
-
-	/* Generate a SW reset from SRC SCR register */
-	writel(SRC_SCR_SW_RST, &src_regs->scr);
-
-	/* If we get there, we are not in good shape */
-	mdelay(1000);
-	printf("FATAL: Reset Failed!\n");
-	hang();
-#endif
+	printf("Feature not supported.\n");
 };
 
 int print_cpuinfo(void)
