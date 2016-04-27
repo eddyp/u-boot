@@ -204,16 +204,6 @@ static void setup_sys_clocks(void)
 	writel(MC_CGM_SC_DCn_DE | MC_CGM_SC_DCn_PREDIV(0x1),
 	       CGM_SC_DCn(MC_CGM0_BASE_ADDR, 1));
 
-#if 0				/* Disable until the modules will be implemented and activated */
-	/* setup the sys clock divider for GPU_CLK (600 MHz) */
-	writel(MC_CGM_SC_DCn_DE | MC_CGM_SC_DCn_PREDIV(0x0),
-	       CGM_SC_DCn(MC_CGM2_BASE_ADDR, 0));
-
-	/* setup the sys clock divider for GPU_SHD_CLK (600 MHz) */
-	writel(MC_CGM_SC_DCn_DE | MC_CGM_SC_DCn_PREDIV(0x0),
-	       CGM_SC_DCn(MC_CGM3_BASE_ADDR, 0));
-#endif
-
 	entry_to_target_mode(MC_ME_MCTL_RUN0);
 
 }
@@ -239,24 +229,6 @@ static void setup_aux_clocks(void)
 	aux_source_clk_config(MC_CGM2_BASE_ADDR, 2, MC_CGM_ACn_SEL_ENETPLL);
 	aux_div_clk_config(MC_CGM2_BASE_ADDR, 2, 0, 9);
 
-	/*
-	 * Disable until the modules will be implemented and activated.
-	 * Please update the divider when activate the module
-	 */
-#if 0
-	/* setup the aux clock divider for H264_DEC_CLK  (350MHz) */
-	aux_source_clk_config(MC_CGM0_BASE_ADDR, 12, MC_CGM_ACn_SEL_ENETPLL);
-	aux_div_clk_config(MC_CGM0_BASE_ADDR, 12, 0, 0);
-
-	/* setup the aux clock divider for H264_ENC_CLK (350MHz) */
-	aux_source_clk_config(MC_CGM0_BASE_ADDR, 13, MC_CGM_ACn_SEL_ENETPLL);
-	aux_div_clk_config(MC_CGM0_BASE_ADDR, 13, 0, 0);
-
-	/* setup the aux clock divider for QSPI_CLK  (416 MHz) */
-	aux_source_clk_config(MC_CGM0_BASE_ADDR, 14, MC_CGM_ACn_SEL_ENETPLL);
-	aux_div_clk_config(MC_CGM0_BASE_ADDR, 14, 0, 0);
-#endif
-
 	/* setup the aux clock divider for SDHC_CLK (50 MHz). */
 	aux_source_clk_config(MC_CGM0_BASE_ADDR, 15, MC_CGM_ACn_SEL_ENETPLL);
 	aux_div_clk_config(MC_CGM0_BASE_ADDR, 15, 0, 9);
@@ -266,33 +238,6 @@ static void setup_aux_clocks(void)
 	aux_div_clk_config(MC_CGM0_BASE_ADDR, 8, 0, 0);
 	/* setup the aux clock divider for DDR4_CLK (133,25MHz) */
 	aux_div_clk_config(MC_CGM0_BASE_ADDR, 8, 1, 3);
-
-	/*
-	 * Disable until the modules will be implemented and activated.
-	 * Please update the divider when activate the module
-	 */
-#if 0
-
-	/* setup the aux clock divider for SEQ_CLK (250MHz) and ISP_CLK (500MHz)) */
-	aux_source_clk_config(MC_CGM0_BASE_ADDR, 0, MC_CGM_ACn_SEL_DDRPLL);
-	aux_div_clk_config(MC_CGM0_BASE_ADDR, 0, 0, 0);
-
-	/* setup the aux clock divider for APEX_APU_CLK (500MHz) */
-	aux_source_clk_config(MC_CGM0_BASE_ADDR, 1, MC_CGM_ACn_SEL_DDRPLL);
-	aux_div_clk_config(MC_CGM0_BASE_ADDR, 1, 0, 0);
-
-	/* setup the aux clock divider for MJPEG_CLK (350MHz) */
-	aux_source_clk_config(MC_CGM0_BASE_ADDR, 2, MC_CGM_ACn_SEL_DDRPLL);
-	aux_div_clk_config(MC_CGM0_BASE_ADDR, 2, 0, 0);
-
-	/* setup the aux clock divider for DCU_AXI_CLK (300MHz) */
-	aux_source_clk_config(MC_CGM0_BASE_ADDR, 9, MC_CGM_ACn_SEL_VIDEOPLL);
-	aux_div_clk_config(MC_CGM0_BASE_ADDR, 9, 0, 0);
-
-	/* setup the aux clock divider for DCU_PIX_CLK (150MHz) */
-	aux_source_clk_config(MC_CGM0_BASE_ADDR, 9, MC_CGM_ACn_SEL_VIDEOPLL);
-	aux_div_clk_config(MC_CGM0_BASE_ADDR, 9, 0, 1);
-#endif
 
 	entry_to_target_mode(MC_ME_MCTL_RUN0);
 
