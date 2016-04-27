@@ -285,8 +285,7 @@ unsigned int mxc_get_clock(enum mxc_clock clk)
 	return -1;
 }
 
-/* Dump some core clocks */
-/* TODO: int soc_clk_dump(); */
+/* Not yet implemented - int soc_clk_dump(); */
 
 #if defined(CONFIG_DISPLAY_CPUINFO)
 static char *get_reset_cause(void)
