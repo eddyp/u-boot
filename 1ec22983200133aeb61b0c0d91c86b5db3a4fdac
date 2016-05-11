@@ -1,0 +1,4 @@
+Changes in v2:
+Added support for device model. Compatibility with non-DM code is kept
+for easier synchronization with the code on the vendor branch where the
+conversion to DM is not done for all boards.
