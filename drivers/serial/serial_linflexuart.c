@@ -36,7 +36,7 @@
 DECLARE_GLOBAL_DATA_PTR;
 
 #ifndef CONFIG_DM_SERIAL
-struct linflex_fsl *lfbase = (struct linflex_fsl *)LINFLEXUART_BASE;
+#error "The linflex serial driver does not have non-DM support."
 #endif
 
 static void _linflex_serial_setbrg(struct linflex_fsl *base, int baudrate)
@@ -58,20 +58,11 @@ static int _linflex_serial_getc(struct linflex_fsl *base)
 {
 	char c;
 
-#ifndef CONFIG_DM_SERIAL
-	/* waiting for data reception complete - TODO: add a timeout */
-	while ((__raw_readb(&base->uartsr) & UARTSR_DRF) != UARTSR_DRF);
-
-	/* waiting for data buffer to be ready - TODO: add a timeout */
-	while ((__raw_readl(&base->uartsr) & UARTSR_RMB) != UARTSR_RMB);
-#else
 	if (!(__raw_readb(&base->uartsr) & UARTSR_DRF))
 		return -EAGAIN;
 
 	if (!(__raw_readl(&base->uartsr) & UARTSR_RMB))
 		return -EAGAIN;
-
-#endif
 
 	c = __raw_readl(&base->bdrm);
 	__raw_writeb((__raw_readb(&base->uartsr) | (UARTSR_DRF | UARTSR_RMB)),
@@ -81,21 +72,11 @@ static int _linflex_serial_getc(struct linflex_fsl *base)
 
 static int _linflex_serial_putc(struct linflex_fsl *base, const char c)
 {
-	#ifndef CONFIG_DM_SERIAL
-	if (c == '\n')
-		serial_putc('\r');
-	#endif
-
 	__raw_writeb(c, &base->bdrl);
 
 
-#ifndef CONFIG_DM_SERIAL
-	/* waiting for data transmission completed - TODO: add a timeout */
-	while ((__raw_readb(&base->uartsr) & UARTSR_DTF) != UARTSR_DTF);
-#else
 	if (!(__raw_readb(&base->uartsr) & UARTSR_DTF))
 		return -EAGAIN;
-#endif
 
 	__raw_writeb((__raw_readb(&base->uartsr) | UARTSR_DTF), &base->uartsr);
 
@@ -138,59 +119,6 @@ static int _linflex_serial_init(struct linflex_fsl *base)
 
 	return 0;
 }
-
-#ifndef CONFIG_DM_SERIAL
-/*
- * Test whether a character is in the RX buffer
- */
-static int _linflex_serial_tstc(void)
-{
-	return 0;
-}
-
-static int nondm_linflex_serial_init(void)
-{
-	return _linflex_serial_init(lfbase);
-}
-
-static void nondm_linflex_serial_setbrg(void)
-{
-	_linflex_serial_setbrg(lfbase, CONFIG_BAUDRATE);
-}
-
-static int nondm_linflex_serial_getc(void)
-{
-	return _linflex_serial_getc(lfbase);
-}
-
-static void nondm_linflex_serial_putc(const char c)
-{
-	_linflex_serial_putc(lfbase, c);
-}
-
-static struct serial_device linflex_serial_drv = {
-	.name = "linflex_serial",
-	.start = nondm_linflex_serial_init,
-	.stop = NULL,
-	.setbrg = nondm_linflex_serial_setbrg,
-	.putc = nondm_linflex_serial_putc,
-	.puts = default_serial_puts,
-	.getc = nondm_linflex_serial_getc,
-	.tstc = _linflex_serial_tstc,
-};
-
-void linflex_serial_initialize(void)
-{
-	serial_register(&linflex_serial_drv);
-}
-
-__weak struct serial_device *default_serial_console(void)
-{
-	return &linflex_serial_drv;
-}
-#endif /* ifndef(CONFIG_DM_SERIAL) */
-
-#ifdef CONFIG_DM_SERIAL
 
 struct linflex_serial_platdata {
 	struct linflex_fsl *base_addr;
@@ -293,5 +221,3 @@ static inline void _debug_uart_putc(int ch)
 DEBUG_UART_FUNCS
 
 #endif /* CONFIG_DEBUG_UART_LINFLEXUART */
-
-#endif /* ifdef CONFIG_DM_SERIAL */
