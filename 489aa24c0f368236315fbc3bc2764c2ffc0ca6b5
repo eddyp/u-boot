@@ -9,3 +9,6 @@ Changes in v2:
 - replaced 'CONFIG_SYS_FSL' with 'S32V234' in defines for MMU bases and sizes
 - reset_cpu now says it's not implemented
 - moved OF_LIBFDT and BOOTZ config options to Kconfig
+
+Changes in v3:
+- None
