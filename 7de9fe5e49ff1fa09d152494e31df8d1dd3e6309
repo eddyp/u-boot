@@ -1,0 +1,20 @@
+Changes in v2:
+- Added support for device model. Compatibility with non-DM code is kept
+  for easier synchronization with the code on the vendor branch where the
+  conversion to DM is not done for all boards.
+- remove TODO-s
+- remove '#if 0'-ed code
+- switched to SPDX headers
+- removed uselss guard around 'DECLARE_GLOBAL_DATA_PTR;'
+- replaced 'CONFIG_SYS_FSL' with 'S32V234' in defines for MMU bases and sizes
+- reset_cpu now says it's not implemented
+- moved OF_LIBFDT and BOOTZ config options to Kconfig
+
+Changes in v3:
+- Switch s32v234evb to config_distro_defaults.h and config_distro_bootcmd.h
+
+Changes in v4:
+- None
+
+Changes in v5:
+- None
