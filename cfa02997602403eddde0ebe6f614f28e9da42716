@@ -11,3 +11,7 @@ Corrected typo: s/_debUG_uart_init/_debug_uart_init/
 
 Changes in v5:
 Enable linflex uart as debug console
+
+Changes in v6:
+Corrected again typo: s/_debUG_uart_init/_debug_uart_init/
+Execution testing was done on an unsquashed branch, sorry for this.
